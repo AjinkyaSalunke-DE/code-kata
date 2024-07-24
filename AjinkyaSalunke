@@ -1,5 +1,6 @@
-#Problem-1 Solution
-#Step-1(Generate Fixed Width File)
+#Problem 1: Parse Fixed Width File- Generate Fixed Width File
+#Implementation: Generate Fixed Width File
+
 def generate_fixed_width_file(output_file):
     data = [
         {"name": "John Doe", "age": "29", "country": "United States"},
@@ -14,9 +15,10 @@ def generate_fixed_width_file(output_file):
 
 generate_fixed_width_file('fixed_width.txt')
 
-#Step-2(Parse Fixed Width File to CSV)
-import csv
+#Parse Fixed Width File and Convert to CSV
+#Implementation: Parse Fixed Width File and Convert to CSV
 
+import csv
 def parse_fixed_width_to_csv(input_file, output_file, spec):
     with open(input_file, 'r') as f, open(output_file, 'w', newline='') as csvfile:
         csv_writer = csv.writer(csvfile)
@@ -36,19 +38,38 @@ spec = {
     "country": 15
 }
 
-parse_fixed_width_to_csv('fixed_width.txt', 'output.csv', spec)
+parse_fixed_width_to_csv('fixed_width.txt', 'output.csv', spec) 
 
-#Step-3(Dockerfile for Problem 1)
+#Dockerfile for Problem 1
+
 FROM python:3.9-slim
-
 WORKDIR /app
-
 COPY . .
-
 CMD ["python", "your_script.py"]
 
-#Problem-2 Solution
-#Step-1 (Generate CSV File)
+###############################################################
+#Problem 2: Data Processing and Anonymization
+#Implementation: Generate CSV File
+
+python
+Copy code
+import csv
+
+def generate_csv(output_file):
+    data = [
+        {"first_name": "John", "last_name": "Doe", "address": "123 Main St", "date_of_birth": "1992-05-15"},
+        {"first_name": "Jane", "last_name": "Smith", "address": "456 Elm St", "date_of_birth": "1987-03-22"},
+        {"first_name": "Emily", "last_name": "Davis", "address": "789 Oak St", "date_of_birth": "1996-08-12"},
+    ]
+
+    with open(output_file, 'w', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=["first_name", "last_name", "address", "date_of_birth"])
+        writer.writeheader()
+        writer.writerows(data)
+
+generate_csv('data.csv')
+
+#Anonymize CSV File We'll anonymize the specified columns in the CSV file.Implementation: Anonymize CSV File
 
 import csv
 import hashlib
@@ -70,33 +91,68 @@ def anonymize_csv(input_file, output_file):
 
 anonymize_csv('data.csv', 'anonymized_data.csv')
 
-#Step-2
-import csv
+#Handling Large Files with Dask
+#Implementation: Using Dask for Large File Processing
+
+import dask.dataframe as dd
 import hashlib
 
-def anonymize_csv(input_file, output_file):
-    def anonymize(value):
-        return hashlib.sha256(value.encode()).hexdigest()
+def anonymize(value):
+    return hashlib.sha256(value.encode()).hexdigest()
 
-    with open(input_file, 'r') as csvfile, open(output_file, 'w', newline='') as outfile:
-        reader = csv.DictReader(csvfile)
-        writer = csv.DictWriter(outfile, fieldnames=reader.fieldnames)
-        writer.writeheader()
-        
-        for row in reader:
-            row['first_name'] = anonymize(row['first_name'])
-            row['last_name'] = anonymize(row['last_name'])
-            row['address'] = anonymize(row['address'])
-            writer.writerow(row)
+def anonymize_row(row):
+    row['first_name'] = anonymize(row['first_name'])
+    row['last_name'] = anonymize(row['last_name'])
+    row['address'] = anonymize(row['address'])
+    return row
 
-anonymize_csv('data.csv', 'anonymized_data.csv')
+# Load the large CSV file
+df = dd.read_csv('large_data.csv')
 
-#Step-3 (Dockerfile for Problem 2)
+# Apply anonymization
+anonymized_df = df.map_partitions(lambda df: df.apply(anonymize_row, axis=1))
+
+# Save the anonymized data to a new CSV file
+anonymized_df.to_csv('anonymized_large_data.csv', single_file=True)
+
+#Dockerfile for Dask Processing
 FROM python:3.9-slim
-
 WORKDIR /app
-
 COPY . .
-
+RUN pip install dask
 CMD ["python", "your_script.py"]
 
+#Backend Integration with Third-Party Providers
+#Implementation: Accounting Software Simulation
+
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+@app.route('/balance-sheet/<string:provider>/<int:year>/<int:month>', methods=['GET'])
+def get_balance_sheet(provider, year, month):
+    balance_sheets = {
+        "xero": [
+            {"year": 2020, "month": 12, "profitOrLoss": 250000, "assetsValue": 1234},
+            {"year": 2020, "month": 11, "profitOrLoss": 1150, "assetsValue": 5789},
+            {"year": 2020, "month": 10, "profitOrLoss": 2500, "assetsValue": 22345},
+            {"year": 2020, "month": 9, "profitOrLoss": -187000, "assetsValue": 223452}
+        ]
+    }
+    
+    return jsonify(balance_sheets.get(provider, []))
+
+if __name__ == '__main__':
+    app.run(port=5000)
+Decision Engine Simulation
+Implementation: Decision Engine Simulation
+python
+Copy code
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/decision', methods=['POST'])
+def get_decision():
+    data = request.json
+    pre_assessment = data
