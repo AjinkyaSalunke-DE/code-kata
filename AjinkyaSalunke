@@ -1,0 +1,102 @@
+#Problem-1 Solution
+#Step-1(Generate Fixed Width File)
+def generate_fixed_width_file(output_file):
+    data = [
+        {"name": "John Doe", "age": "29", "country": "United States"},
+        {"name": "Jane Smith", "age": "35", "country": "Canada"},
+        {"name": "Emily Davis", "age": "24", "country": "Australia"},
+    ]
+
+    with open(output_file, 'w') as f:
+        for record in data:
+            line = f"{record['name']:<10}{record['age']:<3}{record['country']:<15}\n"
+            f.write(line)
+
+generate_fixed_width_file('fixed_width.txt')
+
+#Step-2(Parse Fixed Width File to CSV)
+import csv
+
+def parse_fixed_width_to_csv(input_file, output_file, spec):
+    with open(input_file, 'r') as f, open(output_file, 'w', newline='') as csvfile:
+        csv_writer = csv.writer(csvfile)
+        csv_writer.writerow(spec.keys())
+        
+        for line in f:
+            row = []
+            pos = 0
+            for key, width in spec.items():
+                row.append(line[pos:pos+width].strip())
+                pos += width
+            csv_writer.writerow(row)
+
+spec = {
+    "name": 10,
+    "age": 3,
+    "country": 15
+}
+
+parse_fixed_width_to_csv('fixed_width.txt', 'output.csv', spec)
+
+#Step-3(Dockerfile for Problem 1)
+FROM python:3.9-slim
+
+WORKDIR /app
+
+COPY . .
+
+CMD ["python", "your_script.py"]
+
+#Problem-2 Solution
+#Step-1 (Generate CSV File)
+
+import csv
+import hashlib
+
+def anonymize_csv(input_file, output_file):
+    def anonymize(value):
+        return hashlib.sha256(value.encode()).hexdigest()
+
+    with open(input_file, 'r') as csvfile, open(output_file, 'w', newline='') as outfile:
+        reader = csv.DictReader(csvfile)
+        writer = csv.DictWriter(outfile, fieldnames=reader.fieldnames)
+        writer.writeheader()
+        
+        for row in reader:
+            row['first_name'] = anonymize(row['first_name'])
+            row['last_name'] = anonymize(row['last_name'])
+            row['address'] = anonymize(row['address'])
+            writer.writerow(row)
+
+anonymize_csv('data.csv', 'anonymized_data.csv')
+
+#Step-2
+import csv
+import hashlib
+
+def anonymize_csv(input_file, output_file):
+    def anonymize(value):
+        return hashlib.sha256(value.encode()).hexdigest()
+
+    with open(input_file, 'r') as csvfile, open(output_file, 'w', newline='') as outfile:
+        reader = csv.DictReader(csvfile)
+        writer = csv.DictWriter(outfile, fieldnames=reader.fieldnames)
+        writer.writeheader()
+        
+        for row in reader:
+            row['first_name'] = anonymize(row['first_name'])
+            row['last_name'] = anonymize(row['last_name'])
+            row['address'] = anonymize(row['address'])
+            writer.writerow(row)
+
+anonymize_csv('data.csv', 'anonymized_data.csv')
+
+#Step-3 (Dockerfile for Problem 2)
+FROM python:3.9-slim
+
+WORKDIR /app
+
+COPY . .
+
+CMD ["python", "your_script.py"]
+
