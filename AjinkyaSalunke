@@ -51,8 +51,6 @@ CMD ["python", "your_script.py"]
 #Problem 2: Data Processing and Anonymization
 #Implementation: Generate CSV File
 
-python
-Copy code
 import csv
 
 def generate_csv(output_file):
@@ -144,10 +142,9 @@ def get_balance_sheet(provider, year, month):
 
 if __name__ == '__main__':
     app.run(port=5000)
-Decision Engine Simulation
-Implementation: Decision Engine Simulation
-python
-Copy code
+
+#Implementation: Decision Engine Simulation
+
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
